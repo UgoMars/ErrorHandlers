@@ -1,99 +1,68 @@
-# Function and ErrorHandler in Smart Contract
+# ErrorHandling in  Solidity Smart Contract
 
-This is a smart contract that implements the `require()`, `assert()` and `revert()` statements to handle errors in Student DataBase in solidity smart contract
-
-## Table of Contents
-
-- [Function and ErrorHandler in Smart Contract](#function-and-errorhandler-in-smart-contract)
-  - [Table of Contents](#table-of-contents)
-  - [Contract Details](#contract-details)
-    - [Student Struct](#student-struct)
-    - [students mapping](#students-mapping)
-    - [createStudentProfile](#createstudentprofile)
-    - [confirmStudentName](#confirmstudentname)
-    - [deleteProfile](#deleteprofile)
-    - [Demo Video](#demo-video)
-  - [Authors](#authors)
-  - [License](#license)
-
-## Contract Details
-
-### Student Struct
-
-```sh
- struct Student {
-        string name;
-        uint256 age;
-        string techStack;
-    }
-```
-
-### students mapping
-
-```sh
- mapping(address => Student) public students;
-```
-
-The `students` is the mapping (storage variable) that stores the details of the student.
-
-### createStudentProfile
-
-The `createStudentProfile` function allows that allows a student to create a profile. It uses the `require` statements to check that the student `name` and `techStack` is greater than 4 letters and `age` is not equal to zero.
-
-```sh
-function createStudentProfile(
-        string memory _name,
-        uint256 _age,
-        string memory _techStack
-    ) public {
-        require(bytes(_name).length > 4, "Name greater than 4 letters");
-
-        require(_age != 0, "Age cannot be Zero");
-
-        require(
-            bytes(_techStack).length > 4,
-            "TechStack  greater than 4 letters"
-        );
-
-        students[msg.sender] = Student(_name, _age, _techStack);
-    }
-```
-
-### confirmStudentName
-
-The `confirmStudentName` functions uses the `assert` statement to compare and check that the input name from a user is the same as the name stored on the `students`storage database.
-
-```sh
-function confirmStudentName(string calldata _name) public view {
-        string memory name = students[msg.sender].name;
-        assert(
-            keccak256(abi.encodePacked(name)) ==
-                keccak256(abi.encodePacked(_name))
-        );
-    }
-```
-
-### deleteProfile
-
-The `deleteProfile` function uses the `revert` statement to check if the student profile already exist. This is to ensure that a user can't delete a profile they haven't created.
-
-```sh
- function deleteProfile() public {
-        if (bytes(students[msg.sender].name).length == 0)
-            revert ProfileDoesNotExist();
-
-        delete students[msg.sender];
-    }
-```
+This is a simple solidity smart contract that implements the `require()`, `assert()` and `revert()` statements to handle errors solidity smart contract
 
 ### Demo Video
 
-https://www.loom.com/share/54d27101c89b47f388cb5a9e1a95512d?sid=64594755-5142-40cd-9959-b41d2388ac2d
+https://www.loom.com/share/15bf88409c6a400f9c0bb37a3da22ab1?sid=a121edb3-b305-416c-aca4-a6c6603e8d18
+
+
+
+## Contract Details
+
+### deposit()
+
+```solidity
+
+ // Function that uses the require statement to check the amount a user puts when he want to make deposits
+    function deposit() external payable {
+        require(msg.value > 0, "Amount must be greater than zero");
+        balance += msg.value;
+    }
+```
+
+### withdraw()
+
+```solidity
+ // Function that uses the require statement to check the owner and balance before allower a user to withdraw
+    function withdraw(uint256 amount) external {
+        require(msg.sender == owner, "Only the owner can withdraw");
+        require(amount <= balance, "Insufficient balance");
+        balance -= amount;
+        payable(msg.sender).transfer(amount);
+    }
+
+```
+
+### divideNonZero
+
+```solidity
+ // Function that uses the assert statement to prevent division by zero
+    function divideNonZero(uint256 a, uint256 b) external pure returns (uint256) {
+        assert(b != 0); // Checks to ensure and prevent division by zero
+        return a / b;
+    }
+
+```
+
+```solidity
+// Function that uses the require statement for error Handling to check if the input number is Even, else if will use the revert statement to stop the operation.
+    function checkEven(uint256 num) external pure returns (bool) {
+        require(num > 0, "Number must be positive");
+        if (num % 2 == 0) {
+            return true;
+        } else {
+            revert("Number is not Even");
+        }
+    }
+```
+
+
 
 ## Authors
 
-Marcellus Ifeanyi
-[@metacraftersio](https://twitter.com/Mars_Energy)
+Ugo Mars
+[@metacraftersio](https://github.com/UgoMars)
 
 ## License
 
